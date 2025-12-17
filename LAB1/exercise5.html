@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Portfolio</title>
+    <style>
+        /* General Reset */
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        /* Header Styling */
+        
+        header {
+            background-color: lightseagreen;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        /* Section Layout */
+        
+        section {
+            max-width: 800px;
+            margin: 20px auto;
+            /* Centers the sections with top/bottom margin */
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        /* Skills List Styling */
+        
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .skills-list li {
+            background: #ecf0f1;
+            margin: 5px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        /* Projects Section */
+        
+        .project-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 5px solid #3498db;
+            background: #fcfcfc;
+        }
+        /* Footer Styling */
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #2c3e50;
+            color: white;
+            margin-top: 40px;
+        }
+        
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Vaadyuthi</h1>
+        <p>Building the web one pixel at a time.</p>
+    </header>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <p>I am a front-end developer based in the city. I enjoy turning complex problems into simple, beautiful, and intuitive designs. When I'm not coding, you'll find me exploring new coffee shops or hiking.</p>
+    </section>
+
+    <section id="skills">
+        <h2>Skills</h2>
+        <ul class="skills-list">
+            <li>HTML5</li>
+            <li>CSS3</li>
+            <li>JavaScript</li>
+            <li>Java</li>
+            <li>Python</li>
+        </ul>
+    </section>
+
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="project-item">
+            <h3>1. E-Commerce Dashboard</h3>
+            <p>A data-rich interface for tracking sales and inventory using HTML and CSS Grid.</p>
+        </div>
+        <div class="project-item">
+            <h3>2. Weather App UI</h3>
+            <p>A minimalist weather forecast application focusing on clean typography and icons.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>Interested in working together? Reach out!</p>
+        <p>Email: <a href="mailto:alex@example.com">alex@example.com</a></p>
+    </footer>
+
+</body>
+
+</html>
