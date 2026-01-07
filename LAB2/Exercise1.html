@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .canvas-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        canvas {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="canvas-container">
+        <canvas id="myCanvas" width="500" height="300"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "#3b82f6";
+        ctx.fillRect(50, 40, 150, 100);
+
+        ctx.beginPath();
+        ctx.arc(380, 90, 50, 0, 2 * Math.PI);
+        ctx.fillStyle = "#fb7185";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(50, 200);
+        ctx.lineTo(450, 200);
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        ctx.font = "bold 35px Inter, sans-serif";
+        ctx.fillStyle = "#0f172a";
+        ctx.textAlign = "center";
+        ctx.fillText("HTML5 Canvas", 250, 270);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #fff5f8;
+            padding: 40px;
+            color: #7d5a5a;
+        }
+        
+        .input-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        input {
+            border: 2px solid #ffdae9;
+            padding: 10px 15px;
+            border-radius: 20px;
+            outline: none;
+            width: 200px;
+        }
+        
+        button {
+            background: #ff85a1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            background: #ff4d6d;
+            transform: scale(1.05);
+        }
+        
+        .board {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .column {
+            background: white;
+            border-radius: 25px;
+            width: 250px;
+            min-height: 400px;
+            padding: 15px;
+            border: 3px solid #ffdae9;
+            box-shadow: 0 8px 0px #fce4ec;
+        }
+        
+        h3 {
+            text-align: center;
+            color: #ff85a1;
+            font-size: 1rem;
+            border-bottom: 2px dashed #ffdae9;
+            padding-bottom: 10px;
+        }
+        
+        .task-card {
+            background: #fffafa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 15px;
+            border: 1px solid #ffe4e1;
+            cursor: grab;
+            transition: 0.2s;
+        }
+        
+        .task-card:active {
+            cursor: grabbing;
+            opacity: 0.7;
+        }
+        
+        .completed-task {
+            background: #e8fdf5 !important;
+            border-color: #a7f3d0 !important;
+            text-decoration: line-through;
+            color: #059669;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="input-section">
+        <input type="text" id="taskInput" placeholder="New task name...">
+        <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <div class="board">
+        <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h3>To Do ☁️</h3>
+        </div>
+        <div class="column" id="inprogress" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h3>In Progress ✨</h3>
+        </div>
+        <div class="column" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h3>Completed ✅</h3>
+        </div>
+    </div>
+
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const element = document.getElementById(data);
+            const targetCol = ev.target.closest('.column');
+
+            targetCol.appendChild(element);
+
+            if (targetCol.id === "completed") {
+                element.classList.add('completed-task');
+                alert("Task Completed Successfully! 🎉");
+            } else {
+                element.classList.remove('completed-task');
+            }
+        }
+
+        function addTask() {
+            const name = document.getElementById("taskInput").value;
+            if (!name) return;
+            const id = "task-" + Date.now();
+            const card = document.createElement("div");
+            card.className = "task-card";
+            card.id = id;
+            card.draggable = true;
+            card.ondragstart = drag;
+            card.innerHTML = `<strong>${name}</strong><br><small style="color:#aaa">${new Date().toLocaleDateString()}</small>`;
+            document.getElementById("todo").appendChild(card);
+            document.getElementById("taskInput").value = "";
+        }
+    </script>
+</body>
+
+</html>

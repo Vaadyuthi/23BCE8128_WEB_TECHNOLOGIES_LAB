@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #fff5f8;
+            padding: 40px;
+            color: #7d5a5a;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .player-card {
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 8px 0px #fce4ec;
+            margin-bottom: 25px;
+            border: 3px solid #ffdae9;
+            position: relative;
+        }
+        
+        h2 {
+            font-size: 1rem;
+            margin: 0;
+            color: #ff85a1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        video,
+        audio {
+            width: 100%;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        .time-display {
+            font-family: monospace;
+            font-weight: 700;
+            background: #ffebf2;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: #ff4d6d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="player-card">
+            <h2><span>🎧 Audio</span> <span id="audioTime" class="time-display">0s</span></h2>
+            <audio id="myAudio" controls>
+            <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+        </audio>
+        </div>
+
+        <div class="player-card">
+            <h2><span>☁️ Clips</span> <span id="videoTime" class="time-display">0s</span></h2>
+            <video id="myVideo" controls>
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        </video>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('myAudio');
+        const video = document.getElementById('myVideo');
+
+        const setupTimer = (media, displayId) => {
+            const display = document.getElementById(displayId);
+            media.addEventListener('timeupdate', () => {
+                const seconds = Math.floor(media.currentTime);
+                display.innerText = `${seconds}s`;
+            });
+        };
+
+        setupTimer(audio, 'audioTime');
+        setupTimer(video, 'videoTime');
+    </script>
+
+</body>
+
+</html>

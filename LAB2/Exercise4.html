@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #e0f7fa;
+            padding: 40px;
+            color: #006064;
+        }
+        
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            border: 3px solid #b2dfdb;
+            box-shadow: 0 10px 0px #b0bec5;
+        }
+        
+        h2 {
+            color: #00838f;
+            text-align: center;
+            margin-top: 0;
+        }
+        
+        .reg-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        input {
+            border: 2px solid #e0f2f1;
+            padding: 12px;
+            border-radius: 15px;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        input:focus {
+            border-color: #4dd0e1;
+        }
+        
+        .btn-submit {
+            grid-column: span 2;
+            background: #00acc1;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background: #00838f;
+        }
+        
+        .btn-clear {
+            background: #e0f2f1;
+            color: #00838f;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-top: 20px;
+        }
+        
+        th {
+            color: #00838f;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        td {
+            background: #f1f8e9;
+            padding: 12px;
+            border-top: 1px solid #e0f2f1;
+            border-bottom: 1px solid #e0f2f1;
+        }
+        
+        td:first-child {
+            border-left: 1px solid #e0f2f1;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+        
+        td:last-child {
+            border-right: 1px solid #e0f2f1;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+        
+        .del-btn {
+            color: #00838f;
+            background: none;
+            border: 1px solid #00838f;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .del-btn:hover {
+            background: #00838f;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>User Registration</h2>
+        <form id="regForm" class="reg-form">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="mobile" placeholder="Mobile Number" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" class="btn-submit">Submit</button>
+        </form>
+
+        <div style="display:flex; justify-content: space-between; align-items: center; border-top: 2px dashed #b2dfdb; padding-top: 20px;">
+            <h3 style="margin:0; font-size: 1rem; color: #00838f;">Registered Users</h3>
+            <button onclick="clearAll()" class="btn-clear">Clear All Users</button>
+        </div>
+
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const form = document.getElementById('regForm');
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const user = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                mobile: document.getElementById('mobile').value,
+                password: document.getElementById('password').value
+            };
+
+            if (user.mobile.length !== 10) return alert("Mobile number must be 10 digits");
+            if (user.password.length < 6) return alert("Password must be minimum 6 characters");
+
+            let users = JSON.parse(localStorage.getItem('users') || "[]");
+            if (users.find(u => u.email === user.email)) return alert("Duplicate email registration not allowed");
+
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            renderTable();
+            form.reset();
+        };
+
+        function renderTable() {
+            const users = JSON.parse(localStorage.getItem('users') || "[]");
+            const tbody = document.querySelector('#userTable tbody');
+            tbody.innerHTML = users.map((u, index) => `
+            <tr>
+                <td>${u.name}</td><td>${u.email}</td><td>${u.mobile}</td>
+                <td><button class="del-btn" onclick="deleteUser(${index})">Delete</button></td>
+            </tr>
+        `).join('');
+        }
+
+        function deleteUser(index) {
+            let users = JSON.parse(localStorage.getItem('users'));
+            users.splice(index, 1);
+            localStorage.setItem('users', JSON.stringify(users));
+            renderTable();
+        }
+
+        function clearAll() {
+            if (confirm("Are you sure you want to clear all users?")) {
+                localStorage.removeItem('users');
+                renderTable();
+            }
+        }
+        renderTable();
+    </script>
+</body>
+
+</html>
