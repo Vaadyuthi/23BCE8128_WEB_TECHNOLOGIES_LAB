@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Shopping System</title>
+    <style>
+         :root {
+            --primary: #6366f1;
+            --success: #10b981;
+            --text-main: #1e293b;
+            --bg: #f8fafc;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .product-box {
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .product-box:hover {
+            transform: translateY(-3px);
+        }
+        
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: 600;
+        }
+        /* Cart Styling */
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f1f5f9;
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+        
+        .btn-qty {
+            border: none;
+            background: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.95rem;
+        }
+        
+        .discount-highlight {
+            color: var(--success);
+            font-weight: 700;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 20px 0 5px;
+            box-sizing: border-box;
+        }
+        
+        .total-display {
+            font-size: 2rem;
+            font-weight: 900;
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <div class="card">
+            <h2 style="margin-top:0">Product Catalog</h2>
+            <div id="catalog" class="catalog-grid"></div>
+        </div>
+
+        <div class="card" style="height: fit-content;">
+            <h2 style="margin-top:0">Your Cart</h2>
+            <div id="cartItems">
+                <p style="color:var(--text-muted); text-align:center;">Cart is empty. Add items from the catalog!</p>
+            </div>
+
+            <div id="pricingBreakdown" style="margin-top: 20px;"></div>
+
+            <input type="text" id="couponInput" placeholder="Coupon (e.g., SAVE20_TECH)">
+            <div id="couponStatus" style="font-size: 0.8rem; height: 1.2rem;"></div>
+
+            <div class="total-display" id="grandTotal">$0.00</div>
+        </div>
+    </div>
+
+    <script>
+        const inventory = [{
+            id: 1,
+            name: "Pro Headphones",
+            price: 299,
+            cat: "TECH"
+        }, {
+            id: 2,
+            name: "Smart Watch",
+            price: 199,
+            cat: "TECH"
+        }, {
+            id: 3,
+            name: "Organic Tea",
+            price: 15,
+            cat: "FOOD"
+        }, {
+            id: 4,
+            name: "Leather Chair",
+            price: 450,
+            cat: "OFFICE"
+        }, {
+            id: 5,
+            name: "Laptop Stand",
+            price: 45,
+            cat: "TECH"
+        }, {
+            id: 6,
+            name: "Desk Lamp",
+            price: 80,
+            cat: "OFFICE"
+        }];
+
+        const cart = [];
+        const taxRates = {
+            TECH: 0.08,
+            FOOD: 0.02,
+            OFFICE: 0.05
+        };
+
+        function initCatalog() {
+            const catalogDiv = document.getElementById('catalog');
+            catalogDiv.innerHTML = inventory.map(item => `
+            <div class="product-box">
+                <strong>${item.name}</strong><br>
+                <span style="color:var(--primary)">$${item.price}</span><br>
+                <button class="btn-add" onclick="addToCart(${item.id})">Add to Cart</button>
+            </div>
+        `).join('');
+        }
+
+        function addToCart(id) {
+            const product = inventory.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({...product,
+                    qty: 1
+                });
+            }
+            renderCart();
+        }
+
+        function updateQty(id, delta) {
+            const itemIndex = cart.findIndex(item => item.id === id);
+            if (itemIndex > -1) {
+                cart[itemIndex].qty += delta;
+                if (cart[itemIndex].qty <= 0) cart.splice(itemIndex, 1);
+            }
+            renderCart();
+        }
+
+        function validateCoupon(code) {
+            const status = document.getElementById('couponStatus');
+            if (!code.includes("_") || !code.toUpperCase().startsWith("SAVE")) {
+                status.textContent = "";
+                return 0;
+            }
+
+            const [part1, category] = code.toUpperCase().split("_");
+            const percent = parseInt(part1.replace("SAVE", ""));
+
+            const eligibleTotal = cart
+                .filter(item => item.cat === category)
+                .reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            if (eligibleTotal > 0 && !isNaN(percent)) {
+                status.textContent = `✓ Coupon Applied: ${percent}% off ${category}`;
+                status.style.color = "var(--success)";
+                return eligibleTotal * (percent / 100);
+            }
+
+            status.textContent = "Coupon not valid for items in cart.";
+            status.style.color = "red";
+            return 0;
+        }
+
+        function renderCart() {
+            const cartDiv = document.getElementById('cartItems');
+            const priceDiv = document.getElementById('pricingBreakdown');
+
+            if (cart.length === 0) {
+                cartDiv.innerHTML = `<p style="color:var(--text-muted); text-align:center;">Cart is empty.</p>`;
+                priceDiv.innerHTML = "";
+                document.getElementById('grandTotal').textContent = "$0.00";
+                return;
+            }
+
+            cartDiv.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <div>
+                    <strong>${item.name}</strong><br>
+                    <small>$${item.price} x ${item.qty}</small>
+                </div>
+                <div class="qty-controls">
+                    <button class="btn-qty" onclick="updateQty(${item.id}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button class="btn-qty" onclick="updateQty(${item.id}, 1)">+</button>
+                </div>
+            </div>
+        `).join('');
+
+            let subtotal = 0;
+            let taxTotal = 0;
+            cart.forEach(item => {
+                subtotal += item.price * item.qty;
+                taxTotal += (item.price * item.qty) * (taxRates[item.cat] || 0.05);
+            });
+
+            const couponDisc = validateCoupon(document.getElementById('couponInput').value);
+            const bulkDisc = subtotal > 500 ? subtotal * 0.1 : 0;
+            const total = subtotal + taxTotal - couponDisc - bulkDisc;
+
+            priceDiv.innerHTML = `
+            <div class="summary-line"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+            <div class="summary-line"><span>Tax</span><span>$${taxTotal.toFixed(2)}</span></div>
+            ${bulkDisc > 0 ? `<div class="summary-line discount-highlight"><span>Bulk Savings (10%)</span><span>-$${bulkDisc.toFixed(2)}</span></div>` : ''}
+            ${couponDisc > 0 ? `<div class="summary-line discount-highlight"><span>Coupon</span><span>-$${couponDisc.toFixed(2)}</span></div>` : ''}
+        `;
+
+        document.getElementById('grandTotal').textContent = `$${Math.max(0, total).toFixed(2)}`;
+    }
+
+    document.getElementById('couponInput').addEventListener('input', renderCart);
+    initCatalog();
+    </script>
+
+</body>
+
+</html>

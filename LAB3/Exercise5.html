@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Workflow Engine | Light</title>
+    <style>
+         :root {
+            --primary: #6366f1;
+            --bg: #8abcee;
+            --text: #0f172a;
+            --muted: #64748b;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .card {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-track {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        #fill {
+            height: 100%;
+            width: 25%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: 0.4s ease;
+        }
+        
+        .stage {
+            display: none;
+        }
+        
+        .stage.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            margin-top: 15px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        
+        input:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+        }
+        
+        .error {
+            color: #e11d48;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .next {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .back {
+            background: #f1f5f9;
+            color: var(--muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="progress-track">
+            <div id="fill"></div>
+        </div>
+
+        <form onsubmit="return false;">
+            <div class="stage active" id="s1">
+                <h2 style="margin:0">Identity</h2>
+                <input type="text" id="username" placeholder="Full Name">
+                <div class="error" id="e1">Enter at least 4 characters</div>
+            </div>
+
+            <div class="stage" id="s2">
+                <h2 style="margin:0">Contact</h2>
+                <input type="email" id="email" placeholder="email@domain.com">
+                <div class="error" id="e2">Invalid email format</div>
+            </div>
+
+            <div class="stage" id="s3">
+                <h2 style="margin:0">Security</h2>
+                <input type="password" id="pass" placeholder="Create Password">
+                <input type="password" id="confirm" placeholder="Confirm Password" style="margin-top:10px">
+                <div class="error" id="e3">Passwords must match (8+ chars)</div>
+            </div>
+
+            <div class="stage" id="s4">
+                <h2 style="margin:0">Summary</h2>
+                <div id="summary" style="margin-top:20px; padding:15px; background:#1d83d6; border-radius:12px;"></div>
+            </div>
+
+            <div class="btns">
+                <button type="button" class="back" id="backBtn" onclick="move(-1)" style="display:none">Back</button>
+                <button type="button" class="next" id="nextBtn" onclick="move(1)">Continue</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let step = 1;
+
+        function validate() {
+            if (step === 1) return document.getElementById('username').value.length >= 4;
+            if (step === 2) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value);
+            if (step === 3) {
+                const p = document.getElementById('pass').value;
+                const c = document.getElementById('confirm').value;
+                return p.length >= 8 && p === c;
+            }
+            return true;
+        }
+
+        function move(dir) {
+            const err = document.getElementById(`e${step}`);
+            if (dir === 1 && !validate()) {
+                if (err) err.style.display = 'block';
+                return;
+            }
+            if (err) err.style.display = 'none';
+
+            document.getElementById(`s${step}`).classList.remove('active');
+            step += dir;
+            document.getElementById(`s${step}`).classList.add('active');
+
+            document.getElementById('fill').style.width = (step * 25) + '%';
+            document.getElementById('backBtn').style.display = (step === 1) ? 'none' : 'block';
+            document.getElementById('nextBtn').innerText = (step === 4) ? "Finish" : "Continue";
+
+            if (step === 4) {
+                document.getElementById('summary').innerHTML = `
+                <p><b>Name:</b> ${document.getElementById('username').value}</p>
+                <p><b>Email:</b> ${document.getElementById('email').value}</p>
+            `;
+                document.getElementById('nextBtn').onclick = () => alert("Success!");
+            } else {
+                document.getElementById('nextBtn').onclick = () => move(1);
+            }
+        }
+    </script>
+</body>
+
+</html>

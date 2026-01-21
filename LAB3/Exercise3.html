@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Survey Builder</title>
+    <style>
+         :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --error: #e11d48;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        
+        .survey-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 16px;
+        }
+        
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        
+        p {
+            margin: 8px 0 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        
+        .question-wrapper {
+            margin-bottom: 28px;
+            position: relative;
+        }
+        
+        .question-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        /* Input Styling */
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-sizing: border-box;
+            outline: none;
+        }
+        
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px #dbeafe;
+        }
+        /* Radio & Checkbox Styling */
+        
+        .options-container {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            gap: 12px;
+        }
+        
+        .option-item:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        
+        .option-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 6px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        
+        button[type="submit"]:hover {
+            background: var(--primary-hover);
+        }
+        
+        button[type="submit"]:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="survey-card">
+        <header>
+            <h2>Dynamic Survey Builder</h2>
+        </header>
+
+        <form id="surveyForm" novalidate>
+            <div id="dynamicFields"></div>
+            <button type="submit">Submit Responses</button>
+        </form>
+    </div>
+
+    <script>
+        const surveyConfig = [{
+            id: "fullname",
+            type: "text",
+            label: "Full Name",
+            required: true,
+            maxLimit: 50
+        }, {
+            id: "preference",
+            type: "radio",
+            label: "Preferred Contact Method",
+            options: ["Email", "Phone", "In-person"],
+            required: true
+        }, {
+            id: "interests",
+            type: "checkbox",
+            label: "Areas of Interest (Select at least 2)",
+            options: ["Technology", "Design", "Marketing", "Finance"],
+            minSelect: 2
+        }];
+
+        const fieldsContainer = document.getElementById('dynamicFields');
+
+        function generateSurvey() {
+            surveyConfig.forEach(q => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'question-wrapper';
+
+                const label = document.createElement('label');
+                label.className = 'question-label';
+                label.textContent = q.label;
+                wrapper.appendChild(label);
+
+                if (q.type === 'text') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = q.id;
+                    input.placeholder = "Enter your text here...";
+                    wrapper.appendChild(input);
+                } else if (q.type === 'radio' || q.type === 'checkbox') {
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options-container';
+
+                    q.options.forEach(opt => {
+                        const item = document.createElement('label');
+                        item.className = 'option-item';
+
+                        const input = document.createElement('input');
+                        input.type = q.type;
+                        input.name = q.id;
+                        input.value = opt;
+
+                        item.appendChild(input);
+                        item.appendChild(document.createTextNode(opt));
+                        optionsDiv.appendChild(item);
+                    });
+                    wrapper.appendChild(optionsDiv);
+                }
+
+                const error = document.createElement('div');
+                error.className = 'error-message';
+                error.id = `err-${q.id}`;
+                wrapper.appendChild(error);
+
+                fieldsContainer.appendChild(wrapper);
+            });
+        }
+
+        function validateForm() {
+            let isFormValid = true;
+
+            surveyConfig.forEach(q => {
+                const errorEl = document.getElementById(`err-${q.id}`);
+                let errorText = "";
+
+                if (q.type === 'text') {
+                    const input = document.querySelector(`input[name="${q.id}"]`);
+                    const val = input.value.trim();
+                    if (q.required && !val) errorText = "This field is required.";
+                    else if (q.maxLimit && val.length > q.maxLimit) errorText = `Limit exceeded (${q.maxLimit} chars).`;
+                } else if (q.type === 'radio') {
+                    const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                    if (q.required && !selected) errorText = "Please select an option.";
+                } else if (q.type === 'checkbox') {
+                    const selectedCount = document.querySelectorAll(`input[name="${q.id}"]:checked`).length;
+                    if (q.minSelect && selectedCount < q.minSelect) {
+                        errorText = `Please select at least ${q.minSelect} options.`;
+                    }
+                }
+
+                if (errorText) {
+                    errorEl.textContent = errorText;
+                    errorEl.style.display = 'block';
+                    isFormValid = false;
+                } else {
+                    errorEl.style.display = 'none';
+                }
+            });
+
+            return isFormValid;
+        }
+        document.getElementById('surveyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validateForm()) {
+                alert("✅ Form validated successfully! Ready for submission.");
+            }
+        });
+
+        generateSurvey();
+    </script>
+
+</body>
+
+</html>
