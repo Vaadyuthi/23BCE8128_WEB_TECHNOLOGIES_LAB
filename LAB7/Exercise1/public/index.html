@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Student Notes Manager</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            padding: 30px;
+        }
+        
+        .container {
+            width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        
+        button {
+            padding: 8px 15px;
+            margin-top: 5px;
+        }
+        
+        .note {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Student Notes Manager</h2>
+
+        <h3>Add Note</h3>
+
+        <input id="title" placeholder="Title">
+
+        <input id="subject" placeholder="Subject">
+
+        <textarea id="description" placeholder="Description"></textarea>
+
+        <button onclick="addNote()">Add Note</button>
+
+        <hr>
+
+        <h3>View Notes</h3>
+
+        <div id="notes"></div>
+
+    </div>
+
+    <script>
+        let notes = [];
+
+        function addNote() {
+
+            let title = document.getElementById("title").value;
+            let subject = document.getElementById("subject").value;
+            let description = document.getElementById("description").value;
+
+            let note = {
+                title: title,
+                subject: subject,
+                description: description
+            };
+
+            notes.push(note);
+
+            displayNotes();
+
+        }
+
+        function displayNotes() {
+
+            let output = "";
+
+            notes.forEach((note, index) => {
+
+                output += `
+
+<div class="note">
+
+<h3>${note.title}</h3>
+
+<p><b>Subject:</b> ${note.subject}</p>
+
+<p>${note.description}</p>
+
+<button onclick="editNote(${index})">Edit</button>
+
+<button onclick="deleteNote(${index})">Delete</button>
+
+</div>
+
+`;
+
+            });
+
+            document.getElementById("notes").innerHTML = output;
+
+        }
+
+        function editNote(index) {
+
+            let newTitle = prompt("Edit Title", notes[index].title);
+            let newDesc = prompt("Edit Description", notes[index].description);
+
+            notes[index].title = newTitle;
+            notes[index].description = newDesc;
+
+            displayNotes();
+
+        }
+
+        function deleteNote(index) {
+
+            notes.splice(index, 1);
+
+            displayNotes();
+
+        }
+    </script>
+
+</body>
+
+</html>

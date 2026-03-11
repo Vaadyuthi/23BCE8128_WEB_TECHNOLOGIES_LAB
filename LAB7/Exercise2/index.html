@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Online Book Finder</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            padding: 30px;
+        }
+        
+        .container {
+            width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        
+        button {
+            padding: 8px 15px;
+            margin: 5px 0;
+        }
+        
+        .book {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Online Book Finder</h2>
+
+        <h3>Search by Title</h3>
+        <input id="searchTitle" placeholder="Enter book title">
+        <button onclick="searchBooks()">Search</button>
+
+        <h3>Filter by Category</h3>
+        <select id="categorySelect" onchange="filterCategory()">
+<option value="">--Select Category--</option>
+<option value="Programming">Programming</option>
+<option value="Fiction">Fiction</option>
+<option value="Science">Science</option>
+</select>
+
+        <h3>Sort Books</h3>
+        <select id="sortSelect" onchange="sortBooks()">
+<option value="">--Sort By--</option>
+<option value="priceAsc">Price: Low to High</option>
+<option value="priceDesc">Price: High to Low</option>
+<option value="ratingDesc">Rating: High to Low</option>
+</select>
+
+        <h3>Top Rated Books</h3>
+        <button onclick="topRated()">Show Top Rated</button>
+
+        <h3>Books</h3>
+        <div id="books"></div>
+        <button id="loadMore" onclick="loadMore()">Load More</button>
+
+    </div>
+
+    <script src="books.js"></script>
+
+</body>
+
+</html>
