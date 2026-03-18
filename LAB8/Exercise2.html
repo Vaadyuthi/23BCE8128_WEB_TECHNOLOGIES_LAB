@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Object ES6</title>
+</head>
+
+<body>
+
+    <h2>Student Details</h2>
+
+    <p id="output"></p>
+
+    <script>
+        const student = {
+            id: 101,
+            name: "Priya",
+            department: "CSE",
+            marks: 92
+        };
+
+        const {
+            id,
+            name,
+            department,
+            marks
+        } = student;
+
+        let result1 = `${id} ${name} ${department} ${marks}`;
+
+        let grade = (marks >= 90) ? "A" : "B";
+
+        const updatedStudent = {
+            ...student,
+            grade: grade
+        };
+
+        let result2 = `{ id: ${updatedStudent.id}, name: '${updatedStudent.name}', department: '${updatedStudent.department}', marks: ${updatedStudent.marks}, grade: '${updatedStudent.grade}' }`;
+
+        document.getElementById("output").innerHTML = `
+        ${result1} <br><br>
+        ${result2}
+    `;
+    </script>
+
+</body>
+
+</html>
